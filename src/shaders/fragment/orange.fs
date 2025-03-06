@@ -1,5 +1,7 @@
 #version 330 core
 
+// all pixels are orange
+
 out vec4 FragColor;
 
 void main() {
