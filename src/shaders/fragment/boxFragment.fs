@@ -6,7 +6,8 @@ in vec3 ourColor;
 in vec2 texCoord;
 
 uniform sampler2D ourTexture;
+uniform sampler2D ourSecondTexture;
 
 void main() {
-    FragColor = texture(ourTexture, texCoord) * vec4(ourColor, 1.0);
+    FragColor = mix(texture(ourTexture, texCoord), texture(ourSecondTexture, texCoord), 0.2) * vec4(ourColor, 1.0);
 }

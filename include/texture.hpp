@@ -12,8 +12,11 @@ public:
     unsigned int ID;
 
     Texture(const char* tPath);
+    
+    void use();
 
-
+    void changeWrap(int sort, int type);
+    void changeFilter(int minormag, int type);
 };
 
 #endif

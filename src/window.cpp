@@ -145,7 +145,9 @@ int main() {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
     
+    stbi_set_flip_vertically_on_load(true);
     Texture box("src/textures/wooden-container.jpg");
+    Texture face("src/textures/face.png");
 
     // unbind since glVertexAttribPointer registers VBO as vertex attribute's bound vertex buffer object
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -182,7 +184,12 @@ int main() {
         glDrawArrays(GL_TRIANGLES, 0, 3);
         
         boxTriangles.use();
+        boxTriangles.setInt("ourTexture", 0);
+        boxTriangles.setInt("ourSecondTexture", 1);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, box.ID);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, face.ID);
         glBindVertexArray(VAOs[4]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

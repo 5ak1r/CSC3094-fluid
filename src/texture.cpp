@@ -20,12 +20,46 @@ Texture::Texture(const char* tPath) {
     int width, height, nrChannels;
     unsigned char* data = stbi_load(tPath, &width, &height, &nrChannels, 0);
 
+    std::string str(tPath);
+
     if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        // .png needs RGBA but .jpg does not
+        if (str.find(".jpg") != std::string::npos) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        else glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
         std::cout << "ERROR::TEXTURE::FAILED_LOAD" << std::endl;
     }
 
     stbi_image_free(data);
+}
+
+void Texture::use() {
+    glBindTexture(GL_TEXTURE_2D, ID);
+}
+
+void Texture::changeWrap(int sort, int type) {
+    if ((sort == GL_TEXTURE_WRAP_S || sort == GL_TEXTURE_WRAP_T)
+        && (type == GL_REPEAT || type == GL_CLAMP_TO_BORDER
+        || type == GL_CLAMP_TO_EDGE || type == GL_MIRRORED_REPEAT)) {
+            glBindTexture(GL_TEXTURE_2D, ID);
+            glTexParameteri(GL_TEXTURE_2D, sort, type);
+        }
+    else {
+        std::cout << "ERROR::TEXTURE::CHANGE_WRAP::INCORRECT_INPUT" << std::endl;
+    }
+        
+}
+
+void Texture::changeFilter(int minormag, int type) {
+    if ((minormag == GL_TEXTURE_MIN_FILTER || minormag == GL_TEXTURE_MAG_FILTER)
+        && (type == GL_NEAREST || type == GL_LINEAR)) {
+            glBindTexture(GL_TEXTURE_2D, ID);
+            glTexParameteri(GL_TEXTURE_2D, minormag, type);
+        }
+    else {
+        std::cout << "ERROR::TEXTURE::CHANGE_FILTER::INCORRECT_INPUT" << std::endl;
+    }
+
 }
