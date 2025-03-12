@@ -23,6 +23,8 @@ public:
     void setFloat(const std::string &name, float value) const;
 
     void setFloat4(const std::string &name, float r, float g, float b, float a) const;
+
+    void setMatrix1(const std::string &name, const float* value_ptr) const;
 };
 
 #endif
