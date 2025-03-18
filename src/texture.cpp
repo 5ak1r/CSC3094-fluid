@@ -8,8 +8,8 @@
 #endif
 
 Texture::Texture(const char* tPath) {
-    glGenTextures(1, &ID);
-    glBindTexture(GL_TEXTURE_2D, ID);
+    glGenTextures(1, &this->ID);
+    glBindTexture(GL_TEXTURE_2D, this->ID);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -36,14 +36,14 @@ Texture::Texture(const char* tPath) {
 }
 
 void Texture::use() {
-    glBindTexture(GL_TEXTURE_2D, ID);
+    glBindTexture(GL_TEXTURE_2D, this->ID);
 }
 
 void Texture::changeWrap(int sort, int type) {
     if ((sort == GL_TEXTURE_WRAP_S || sort == GL_TEXTURE_WRAP_T)
         && (type == GL_REPEAT || type == GL_CLAMP_TO_BORDER
         || type == GL_CLAMP_TO_EDGE || type == GL_MIRRORED_REPEAT)) {
-            glBindTexture(GL_TEXTURE_2D, ID);
+            glBindTexture(GL_TEXTURE_2D, this->ID);
             glTexParameteri(GL_TEXTURE_2D, sort, type);
         }
     else {
@@ -55,7 +55,7 @@ void Texture::changeWrap(int sort, int type) {
 void Texture::changeFilter(int minormag, int type) {
     if ((minormag == GL_TEXTURE_MIN_FILTER || minormag == GL_TEXTURE_MAG_FILTER)
         && (type == GL_NEAREST || type == GL_LINEAR)) {
-            glBindTexture(GL_TEXTURE_2D, ID);
+            glBindTexture(GL_TEXTURE_2D, this->ID);
             glTexParameteri(GL_TEXTURE_2D, minormag, type);
         }
     else {
