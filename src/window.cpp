@@ -7,6 +7,7 @@
 #include "../include/glm/gtc/matrix_transform.hpp"
 #include "../include/glm/gtc/type_ptr.hpp"
 
+#include <GL/glext.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cmath>
@@ -110,6 +111,8 @@ int main() {
     }
 
     glEnable(GL_DEPTH_TEST);
+    
+    stbi_set_flip_vertically_on_load(true);
 
     Shader orangeTriangle("src/shaders/vertex/vertex.vs", "src/shaders/fragment/orange.fs");
     Shader yellowTriangle("src/shaders/vertex/vertex.vs","src/shaders/fragment/yellow.fs");
@@ -118,28 +121,32 @@ int main() {
     Shader boxTriangles("src/shaders/vertex/boxVertex.vs", "src/shaders/fragment/boxFragment.fs");
     Shader nonRainbowBoxTriangles("src/shaders/vertex/nonRainbowBoxVertex.vs", "src/shaders/fragment/nonRainbowBoxFragment.fs");
     Shader lightingBoxTriangles("src/shaders/vertex/lighting.vs", "src/shaders/fragment/lighting.fs");
+    Shader litObjectTriangles("src/shaders/vertex/litObject.vs", "src/shaders/fragment/litObject.fs");
+
+    Texture box("src/textures/wooden-container.jpg");
+    Texture face("src/textures/face.png");
 
     float vertices[] = {
         -0.45f, -0.25f, 0.0f,  // left 
-        0.0f, -0.25f, 0.0f,  // right
+        0.0f,   -0.25f, 0.0f,  // right
         -0.225f, 0.25f, 0.0f,  //top
     };
 
     float yellowVertices[] = {
-        0.0f, -0.25f, 0.0f,  // left
+        0.0f,  -0.25f, 0.0f,  // left
         0.45f, -0.25f, 0.0f,  // right
         0.225f, 0.25f, 0.0f   // top 
     };
 
     float changingVertices[] = {
         0.45f, -0.25f, 0.0f, // left
-        0.9f, -0.25f, 0.0f, // right
+        0.9f,  -0.25f, 0.0f, // right
         0.675f, 0.25f, 0.0f // top
     };
 
     float vertexColorVertices[] = {
         // positions            // colors
-        -0.9f, -0.25f, 0.0f, 1.0f, 0.0f, 0.0f, //left
+        -0.9f,  -0.25f, 0.0f, 1.0f, 0.0f, 0.0f, //left
         -0.45f, -0.25f, 0.0f, 0.0f, 1.0f, 0.0f, //right
         -0.675f, 0.25f, 0.0f, 0.0f, 0.0f, 1.0f // top
     };
@@ -154,16 +161,16 @@ int main() {
 
     float nonRainbowBoxVertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
     
         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
         -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
     
@@ -182,18 +189,62 @@ int main() {
         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
     
         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
     
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
         -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
+
+    float lightingVertices[] = {
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+    0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+    0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+    0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+    0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+    0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+    0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
     glm::vec3 nonRainbowBoxPositions[] = {
@@ -270,12 +321,16 @@ int main() {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    glBindVertexArray(VAOs[6]);
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
-    
-    stbi_set_flip_vertically_on_load(true);
-    Texture box("src/textures/wooden-container.jpg");
-    Texture face("src/textures/face.png");
+    glBindVertexArray(VAOs[6]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[6]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(lightingVertices), lightingVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+ 
 
     // unbind since glVertexAttribPointer registers VBO as vertex attribute's bound vertex buffer object
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -284,8 +339,8 @@ int main() {
     // render loop
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
-        
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // camera movement speed
@@ -293,14 +348,18 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+        lightPos.x = sin(currentFrame);
+        lightPos.y = cos(currentFrame);
+        lightPos.z = sin(currentFrame) + cos(currentFrame);
+
         orangeTriangle.use();
         glBindVertexArray(VAOs[0]);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
         //wireframe mode: glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); - GL_FILL to revert back if using these
         
         yellowTriangle.use();
         glBindVertexArray(VAOs[1]);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
 
         changingTriangle.use();
 
@@ -310,11 +369,11 @@ int main() {
         changingTriangle.setFloat4("ourColor", 0.0f, greenValue, 0.0f, 1.0f);
 
         glBindVertexArray(VAOs[2]);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
 
         verticesTriangle.use();
         glBindVertexArray(VAOs[3]);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
         
         boxTriangles.use();
         boxTriangles.setInt("ourTexture", 0);
@@ -332,7 +391,7 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, face.ID);
 
         glBindVertexArray(VAOs[4]);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // transform matrix
         trans = glm::mat4(1.0f);
@@ -346,7 +405,7 @@ int main() {
 
         // view matrix
         glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); // opposite direction of where we want to move
+        view = camera.GetViewMatrix();
 
         // projection matrix
         glm::mat4 projection = glm::mat4(1.0f);
@@ -357,7 +416,7 @@ int main() {
         boxTriangles.setMatrix1("model", glm::value_ptr(model));
         boxTriangles.setMatrix1("view", glm::value_ptr(view));
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glBindVertexArray(VAOs[5]);
 
@@ -375,31 +434,59 @@ int main() {
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             nonRainbowBoxTriangles.setMatrix1("model", glm::value_ptr(model));
 
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            //glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-        view = glm::mat4(1.0f);
         /*float radius = 10.0f;
         float camX = static_cast<float>(sin(glfwGetTime()) * radius);
         float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
         view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));*/
 
-        view = camera.GetViewMatrix();
         nonRainbowBoxTriangles.setMatrix1("view", glm::value_ptr(view));
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f));
+
+        lightingBoxTriangles.use();
+        lightingBoxTriangles.setMatrix1("view", glm::value_ptr(view));
+        lightingBoxTriangles.setMatrix1("projection", glm::value_ptr(projection));
+        lightingBoxTriangles.setMatrix1("model", glm::value_ptr(model));
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindVertexArray(VAOs[6]);
+
+        litObjectTriangles.use();
+        litObjectTriangles.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        litObjectTriangles.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+        litObjectTriangles.setVec3("lightPos", lightPos);
+        litObjectTriangles.setVec3("viewPos", camera.position);
+
+        model = glm::mat4(1.0f);
+
+        litObjectTriangles.setMatrix1("view", glm::value_ptr(view));
+        litObjectTriangles.setMatrix1("projection", glm::value_ptr(projection));
+        litObjectTriangles.setMatrix1("model", glm::value_ptr(model));
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
         glfwPollEvents();    
     }
 
     // deallocate resources when done with them
-    glDeleteVertexArrays(6, VAOs);
-    glDeleteBuffers(6, VBOs);
+    glDeleteVertexArrays(7, VAOs);
+    glDeleteBuffers(7, VBOs);
     
     orangeTriangle.del();
     yellowTriangle.del();
     changingTriangle.del();
     verticesTriangle.del();
     boxTriangles.del();
+    nonRainbowBoxTriangles.del();
+    lightingBoxTriangles.del();
+    litObjectTriangles.del();
 
     // GLFW terminate and clear allocated GLFW resources
     glfwTerminate();

@@ -2,6 +2,7 @@
 #define SHADER_H
 
 #include "glad.h"
+#include "glm/glm.hpp"
 
 #include <iostream>
 #include <string>
@@ -23,6 +24,9 @@ public:
     void setFloat(const std::string &name, float value) const;
 
     void setFloat4(const std::string &name, float r, float g, float b, float a) const;
+
+    void setVec3(const std::string &name, float x, float y, float z) const;
+    void setVec3(const std::string &name, glm::vec3 vec) const;
 
     void setMatrix1(const std::string &name, const float* value_ptr) const;
 };
