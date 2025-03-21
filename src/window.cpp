@@ -122,9 +122,13 @@ int main() {
     Shader nonRainbowBoxTriangles("src/shaders/vertex/nonRainbowBoxVertex.vs", "src/shaders/fragment/nonRainbowBoxFragment.fs");
     Shader lightingBoxTriangles("src/shaders/vertex/lighting.vs", "src/shaders/fragment/lighting.fs");
     Shader litObjectTriangles("src/shaders/vertex/litObject.vs", "src/shaders/fragment/litObject.fs");
+    Shader litWoodenBoxTriangles("src/shaders/vertex/litWoodenBox.vs", "src/shaders/fragment/litWoodenBox.fs");
 
-    Texture box("src/textures/wooden-container.jpg");
+    Texture woodenContainer("src/textures/wooden-container.jpg");
     Texture face("src/textures/face.png");
+    Texture woodenBox("src/textures/wooden-box.png");
+    Texture woodenBoxSpecular("src/textures/wooden-box-specular.png");
+    Texture woodenBoxEmission("src/textures/matrix.jpg");
 
     float vertices[] = {
         -0.45f, -0.25f, 0.0f,  // left 
@@ -181,12 +185,12 @@ int main() {
         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
         -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
     
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
     
         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
          0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
@@ -204,48 +208,97 @@ int main() {
     };
 
     float lightingVertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
 
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-    0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-    0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-    0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-    0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-    0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-    0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
+
+        
+
+    float litWoodenBoxVertices[] = {
+        // positions          // normals           // texture coords
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
+    };
+
+
 
     glm::vec3 nonRainbowBoxPositions[] = {
         glm::vec3( 0.0f,  0.0f,  0.0f), 
@@ -265,9 +318,9 @@ int main() {
         1, 2, 3  // second triangle
     };
 
-    unsigned int VAOs[7], VBOs[7], EBO;
-    glGenVertexArrays(7, VAOs);
-    glGenBuffers(7, VBOs);
+    unsigned int VAOs[8], VBOs[8], EBO;
+    glGenVertexArrays(8, VAOs);
+    glGenBuffers(8, VBOs);
     glGenBuffers(1, &EBO);
 
     //glGenBuffers(1, &EBO);
@@ -330,17 +383,31 @@ int main() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
- 
+
+    glBindVertexArray(VAOs[7]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[7]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(litWoodenBoxVertices), litWoodenBoxVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     // unbind since glVertexAttribPointer registers VBO as vertex attribute's bound vertex buffer object
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
     //glBindVertexArray(0);
 
+    litWoodenBoxTriangles.use();
+    litWoodenBoxTriangles.setInt("material.diffuse", 0); // set outside as this does not change
+    litWoodenBoxTriangles.setInt("material.specular", 1);
+    litWoodenBoxTriangles.setInt("material.emission", 2);
+    
     // render loop
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // camera movement speed
@@ -348,9 +415,9 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        lightPos.x = sin(currentFrame);
-        lightPos.y = cos(currentFrame);
-        lightPos.z = sin(currentFrame) + cos(currentFrame);
+        //lightPos.x = sin(currentFrame);
+        //lightPos.y = cos(currentFrame);
+        //lightPos.z = sin(currentFrame) + cos(currentFrame);
 
         orangeTriangle.use();
         glBindVertexArray(VAOs[0]);
@@ -386,7 +453,7 @@ int main() {
         boxTriangles.setMatrix1("transform", glm::value_ptr(trans));
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, box.ID);
+        glBindTexture(GL_TEXTURE_2D, woodenContainer.ID);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, face.ID);
 
@@ -444,24 +511,42 @@ int main() {
 
         nonRainbowBoxTriangles.setMatrix1("view", glm::value_ptr(view));
 
+        lightingBoxTriangles.use();
+        lightingBoxTriangles.setMatrix1("view", glm::value_ptr(view));
+        lightingBoxTriangles.setMatrix1("projection", glm::value_ptr(projection));
+
         model = glm::mat4(1.0f);
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f));
 
-        lightingBoxTriangles.use();
-        lightingBoxTriangles.setMatrix1("view", glm::value_ptr(view));
-        lightingBoxTriangles.setMatrix1("projection", glm::value_ptr(projection));
         lightingBoxTriangles.setMatrix1("model", glm::value_ptr(model));
+
+        glm::vec3 lightColor = glm::vec3(1.0f);
+        lightColor.x = sin(glfwGetTime() * 2.0f);
+        lightColor.y = sin(glfwGetTime() * 0.7f);
+        lightColor.z = sin(glfwGetTime() * 1.3f);
+
+        lightingBoxTriangles.setFloat3("lightColor", lightColor);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glBindVertexArray(VAOs[6]);
 
         litObjectTriangles.use();
-        litObjectTriangles.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-        litObjectTriangles.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        litObjectTriangles.setVec3("lightPos", lightPos);
-        litObjectTriangles.setVec3("viewPos", camera.position);
+        litObjectTriangles.setFloat3("viewPos", camera.position);
+
+        litObjectTriangles.setFloat3("material.ambient", 1.0f, 0.5f, 0.31f);
+        litObjectTriangles.setFloat3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        litObjectTriangles.setFloat3("material.specular", 0.5f, 0.5f, 0.5f);
+        litObjectTriangles.setFloat("material.shininess", 32.0f);
+
+        glm::vec3 ambientColor = lightColor * glm::vec3(0.2f);
+        glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+
+        litObjectTriangles.setFloat3("light.position", lightPos);
+        litObjectTriangles.setFloat3("light.ambient",  ambientColor);
+        litObjectTriangles.setFloat3("light.diffuse",  diffuseColor);
+        litObjectTriangles.setFloat3("light.specular", 1.0f, 1.0f, 1.0f);
 
         model = glm::mat4(1.0f);
 
@@ -469,15 +554,51 @@ int main() {
         litObjectTriangles.setMatrix1("projection", glm::value_ptr(projection));
         litObjectTriangles.setMatrix1("model", glm::value_ptr(model));
 
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindVertexArray(VAOs[7]);
+
+        litWoodenBoxTriangles.use();
+        //litWoodenBoxTriangles.setVec4("light.posdir", lightPos, 1.0f);
+        litWoodenBoxTriangles.setFloat4("light.posdir", -0.2f, -1.0f, -0.3f, 0.0f); 	
+        litWoodenBoxTriangles.setFloat3("viewPos", camera.position);
+
+        litWoodenBoxTriangles.setFloat("material.shininess", 64.0f);
+
+        litWoodenBoxTriangles.setFloat3("light.ambient",  glm::vec3(0.2f));
+        litWoodenBoxTriangles.setFloat3("light.diffuse",  glm::vec3(0.5f));
+        litWoodenBoxTriangles.setFloat3("light.specular", glm::vec3(1.0f));
+
+        model = glm::mat4(1.0f);
+
+        litWoodenBoxTriangles.setMatrix1("view", glm::value_ptr(view));
+        litWoodenBoxTriangles.setMatrix1("projection", glm::value_ptr(projection));
+        litWoodenBoxTriangles.setMatrix1("model", glm::value_ptr(model));
+        
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, woodenBox.ID);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, woodenBoxSpecular.ID);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, woodenBoxEmission.ID);
+
+        for(unsigned int i = 0; i < 10; i++) {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, nonRainbowBoxPositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            litWoodenBoxTriangles.setMatrix1("model", glm::value_ptr(model));
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();    
     }
 
     // deallocate resources when done with them
-    glDeleteVertexArrays(7, VAOs);
-    glDeleteBuffers(7, VBOs);
+    glDeleteVertexArrays(8, VAOs);
+    glDeleteBuffers(8, VBOs);
     
     orangeTriangle.del();
     yellowTriangle.del();

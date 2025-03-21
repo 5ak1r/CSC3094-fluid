@@ -23,10 +23,11 @@ public:
     void setInt(const std::string &name, int value) const;
     void setFloat(const std::string &name, float value) const;
 
+    void setFloat3(const std::string &name, float x, float y, float z) const;
+    void setFloat3(const std::string &name, glm::vec3 vec) const;
     void setFloat4(const std::string &name, float r, float g, float b, float a) const;
-
-    void setVec3(const std::string &name, float x, float y, float z) const;
-    void setVec3(const std::string &name, glm::vec3 vec) const;
+    void setFloat4(const std::string &name, glm::vec3 vec, float w) const;
+    void setFloat4(const std::string &name, glm::vec4) const;
 
     void setMatrix1(const std::string &name, const float* value_ptr) const;
 };
