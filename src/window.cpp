@@ -75,7 +75,6 @@ void processInput(GLFWwindow *window)
         camera.ProcessKeyboard(RIGHT, deltaTime);
 }
 
-// g++ -I./include lib/glad/*.c* src/*.c* -lglfw -lGL -lGLU
 int main() {
 
     // GLFW init and config
@@ -300,7 +299,7 @@ int main() {
 
 
 
-    glm::vec3 nonRainbowBoxPositions[] = {
+    glm::vec3 cubePositions[] = {
         glm::vec3( 0.0f,  0.0f,  0.0f), 
         glm::vec3( 2.0f,  5.0f, -15.0f), 
         glm::vec3(-1.5f, -2.2f, -2.5f),  
@@ -323,7 +322,6 @@ int main() {
     glGenBuffers(8, VBOs);
     glGenBuffers(1, &EBO);
 
-    //glGenBuffers(1, &EBO);
     glBindVertexArray(VAOs[0]);
     glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -401,7 +399,7 @@ int main() {
     litWoodenBoxTriangles.use();
     litWoodenBoxTriangles.setInt("material.diffuse", 0); // set outside as this does not change
     litWoodenBoxTriangles.setInt("material.specular", 1);
-    litWoodenBoxTriangles.setInt("material.emission", 2);
+    //litWoodenBoxTriangles.setInt("material.emission", 2);
     
     // render loop
     while(!glfwWindowShouldClose(window)) {
@@ -411,13 +409,13 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // camera movement speed
-        float currentFrame = glfwGetTime();
+        float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        //lightPos.x = sin(currentFrame);
-        //lightPos.y = cos(currentFrame);
-        //lightPos.z = sin(currentFrame) + cos(currentFrame);
+        //lightPos.x = glm::sin(currentFrame);
+        //lightPos.y = glm::cos(currentFrame);
+        //lightPos.z = glm::sin(currentFrame) + glm::cos(currentFrame);
 
         orangeTriangle.use();
         glBindVertexArray(VAOs[0]);
@@ -431,7 +429,7 @@ int main() {
         changingTriangle.use();
 
         float timeValue = glfwGetTime();
-        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+        float greenValue = (glm::sin(timeValue) / 2.0f) + 0.5f;
         
         changingTriangle.setFloat4("ourColor", 0.0f, greenValue, 0.0f, 1.0f);
 
@@ -463,7 +461,7 @@ int main() {
         // transform matrix
         trans = glm::mat4(1.0f);
         trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
-        float scaleAmount = static_cast<float>(sin(glfwGetTime()));
+        float scaleAmount = static_cast<float>(glm::sin(glfwGetTime()));
         trans = glm::scale(trans, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
 
         // model matrix
@@ -495,7 +493,7 @@ int main() {
 
         for(unsigned int i = 0; i < 10; i++) {
             model = glm::mat4(1.0f);
-            model = glm::translate(model, nonRainbowBoxPositions[i]);
+            model = glm::translate(model, cubePositions[i]);
             float angle = 20.0f * i;
             if (i % 3 == 0) angle = glfwGetTime() * 25.0f;
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
@@ -504,10 +502,10 @@ int main() {
             //glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-        /*float radius = 10.0f;
-        float camX = static_cast<float>(sin(glfwGetTime()) * radius);
-        float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
-        view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));*/
+        /* HERE float radius = 10.0f;
+        float camX = static_cast<float>(glm::sin(glfwGetTime()) * radius);
+        float camZ = static_cast<float>(glm::cos(glfwGetTime()) * radius);
+        view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)); */
 
         nonRainbowBoxTriangles.setMatrix1("view", glm::value_ptr(view));
 
@@ -522,18 +520,18 @@ int main() {
         lightingBoxTriangles.setMatrix1("model", glm::value_ptr(model));
 
         glm::vec3 lightColor = glm::vec3(1.0f);
-        lightColor.x = sin(glfwGetTime() * 2.0f);
-        lightColor.y = sin(glfwGetTime() * 0.7f);
-        lightColor.z = sin(glfwGetTime() * 1.3f);
+        /*lightColor.x = glm::sin(glfwGetTime() * 2.0f);
+        lightColor.y = glm::sin(glfwGetTime() * 0.7f);
+        lightColor.z = glm::sin(glfwGetTime() * 1.3f);
 
-        lightingBoxTriangles.setFloat3("lightColor", lightColor);
+        lightingBoxTriangles.setVec3("lightColor", lightColor);*/
 
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glBindVertexArray(VAOs[6]);
 
         litObjectTriangles.use();
-        litObjectTriangles.setFloat3("viewPos", camera.position);
+        litObjectTriangles.setVec3("viewPos", camera.position);
 
         litObjectTriangles.setFloat3("material.ambient", 1.0f, 0.5f, 0.31f);
         litObjectTriangles.setFloat3("material.diffuse", 1.0f, 0.5f, 0.31f);
@@ -543,9 +541,9 @@ int main() {
         glm::vec3 ambientColor = lightColor * glm::vec3(0.2f);
         glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
 
-        litObjectTriangles.setFloat3("light.position", lightPos);
-        litObjectTriangles.setFloat3("light.ambient",  ambientColor);
-        litObjectTriangles.setFloat3("light.diffuse",  diffuseColor);
+        litObjectTriangles.setVec3("light.position", lightPos);
+        litObjectTriangles.setVec3("light.ambient",  ambientColor);
+        litObjectTriangles.setVec3("light.diffuse",  diffuseColor);
         litObjectTriangles.setFloat3("light.specular", 1.0f, 1.0f, 1.0f);
 
         model = glm::mat4(1.0f);
@@ -555,24 +553,31 @@ int main() {
         litObjectTriangles.setMatrix1("model", glm::value_ptr(model));
 
         //glDrawArrays(GL_TRIANGLES, 0, 36);
-
+        
+        
         glBindVertexArray(VAOs[7]);
 
         litWoodenBoxTriangles.use();
-        //litWoodenBoxTriangles.setVec4("light.posdir", lightPos, 1.0f);
-        litWoodenBoxTriangles.setFloat4("light.posdir", -0.2f, -1.0f, -0.3f, 0.0f); 	
-        litWoodenBoxTriangles.setFloat3("viewPos", camera.position);
+        litWoodenBoxTriangles.setVec3("light.position", camera.position);
+        litWoodenBoxTriangles.setVec3("light.direction", camera.front);
+        litWoodenBoxTriangles.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+        litWoodenBoxTriangles.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
+        litWoodenBoxTriangles.setVec3("viewPos", camera.position);
 
-        litWoodenBoxTriangles.setFloat("material.shininess", 64.0f);
+        litWoodenBoxTriangles.setVec3("light.ambient",  glm::vec3(0.1f));
+        litWoodenBoxTriangles.setVec3("light.diffuse",  glm::vec3(0.8f));
+        litWoodenBoxTriangles.setVec3("light.specular", glm::vec3(1.0f));
 
-        litWoodenBoxTriangles.setFloat3("light.ambient",  glm::vec3(0.2f));
-        litWoodenBoxTriangles.setFloat3("light.diffuse",  glm::vec3(0.5f));
-        litWoodenBoxTriangles.setFloat3("light.specular", glm::vec3(1.0f));
+        litWoodenBoxTriangles.setFloat("light.constant", 1.0f);
+        litWoodenBoxTriangles.setFloat("light.linear", 0.09f);
+        litWoodenBoxTriangles.setFloat("light.quadratic", 0.032f);
+
+        litWoodenBoxTriangles.setFloat("material.shininess", 32.0f);
+
+        litWoodenBoxTriangles.setMatrix1("projection", glm::value_ptr(projection));
+        litWoodenBoxTriangles.setMatrix1("view", glm::value_ptr(view));
 
         model = glm::mat4(1.0f);
-
-        litWoodenBoxTriangles.setMatrix1("view", glm::value_ptr(view));
-        litWoodenBoxTriangles.setMatrix1("projection", glm::value_ptr(projection));
         litWoodenBoxTriangles.setMatrix1("model", glm::value_ptr(model));
         
         glActiveTexture(GL_TEXTURE0);
@@ -583,8 +588,8 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, woodenBoxEmission.ID);
 
         for(unsigned int i = 0; i < 10; i++) {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, nonRainbowBoxPositions[i]);
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
             float angle = 20.0f * i;
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             litWoodenBoxTriangles.setMatrix1("model", glm::value_ptr(model));
@@ -608,6 +613,7 @@ int main() {
     nonRainbowBoxTriangles.del();
     lightingBoxTriangles.del();
     litObjectTriangles.del();
+    litWoodenBoxTriangles.del();
 
     // GLFW terminate and clear allocated GLFW resources
     glfwTerminate();
