@@ -122,6 +122,7 @@ int main() {
     Shader lightingBoxTriangles("src/shaders/vertex/lighting.vs", "src/shaders/fragment/lighting.fs");
     Shader litObjectTriangles("src/shaders/vertex/litObject.vs", "src/shaders/fragment/litObject.fs");
     Shader litWoodenBoxTriangles("src/shaders/vertex/litWoodenBox.vs", "src/shaders/fragment/litWoodenBox.fs");
+    Shader multipleLightTriangles("src/shaders/vertex/multipleLights.vs", "src/shaders/fragment/multipleLights.fs");
 
     Texture woodenContainer("src/textures/wooden-container.jpg");
     Texture face("src/textures/face.png");
@@ -312,6 +313,13 @@ int main() {
         glm::vec3(-1.3f,  1.0f, -1.5f)  
     };
 
+    glm::vec3 pointLightPositions[] = {
+        glm::vec3( 0.7f,  0.2f,  2.0f),
+        glm::vec3( 2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f,  2.0f, -12.0f),
+        glm::vec3( 0.0f,  0.0f, -3.0f)
+    };
+
     unsigned int boxIndices[] = {
         0, 1, 3, // first triangle
         1, 2, 3  // second triangle
@@ -392,6 +400,33 @@ int main() {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
+    unsigned int multipleVBO, multipleVAO;
+
+    glGenVertexArrays(1, &multipleVAO);
+    glGenBuffers(1, &multipleVBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, multipleVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(litWoodenBoxVertices), litWoodenBoxVertices, GL_STATIC_DRAW);
+
+    glBindVertexArray(multipleVAO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
+    unsigned int lightVAO;
+    glGenVertexArrays(1, &lightVAO);
+    glBindVertexArray(lightVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, multipleVBO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    multipleLightTriangles.use();
+    multipleLightTriangles.setInt("material.diffuse", 0);
+    multipleLightTriangles.setInt("material.specular", 1);
     // unbind since glVertexAttribPointer registers VBO as vertex attribute's bound vertex buffer object
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
     //glBindVertexArray(0);
@@ -587,12 +622,110 @@ int main() {
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, woodenBoxEmission.ID);
 
-        for(unsigned int i = 0; i < 10; i++) {
+        /*for(unsigned int i = 0; i < 10; i++) {
             model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
             float angle = 20.0f * i;
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             litWoodenBoxTriangles.setMatrix1("model", glm::value_ptr(model));
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }*/
+
+        multipleLightTriangles.use();
+        multipleLightTriangles.setVec3("viewPos", camera.position);
+        multipleLightTriangles.setFloat("material.shininess", 32.0f);
+
+        // directional light
+        multipleLightTriangles.setFloat3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+        multipleLightTriangles.setFloat3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+        multipleLightTriangles.setFloat3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+        multipleLightTriangles.setFloat3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+        
+        // point light 1
+        multipleLightTriangles.setVec3("pointLights[0].position", pointLightPositions[0]);
+        multipleLightTriangles.setFloat3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+        multipleLightTriangles.setFloat3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+        multipleLightTriangles.setFloat3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+        multipleLightTriangles.setFloat("pointLights[0].constant", 1.0f);
+        multipleLightTriangles.setFloat("pointLights[0].linear", 0.09f);
+        multipleLightTriangles.setFloat("pointLights[0].quadratic", 0.032f);
+        
+        // point light 2
+        multipleLightTriangles.setVec3("pointLights[1].position", pointLightPositions[1]);
+        multipleLightTriangles.setFloat3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+        multipleLightTriangles.setFloat3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+        multipleLightTriangles.setFloat3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+        multipleLightTriangles.setFloat("pointLights[1].constant", 1.0f);
+        multipleLightTriangles.setFloat("pointLights[1].linear", 0.09f);
+        multipleLightTriangles.setFloat("pointLights[1].quadratic", 0.032f);
+        
+        // point light 3
+        multipleLightTriangles.setVec3("pointLights[2].position", pointLightPositions[2]);
+        multipleLightTriangles.setFloat3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+        multipleLightTriangles.setFloat3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+        multipleLightTriangles.setFloat3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+        multipleLightTriangles.setFloat("pointLights[2].constant", 1.0f);
+        multipleLightTriangles.setFloat("pointLights[2].linear", 0.09f);
+        multipleLightTriangles.setFloat("pointLights[2].quadratic", 0.032f);
+        
+        // point light 4
+        multipleLightTriangles.setVec3("pointLights[3].position", pointLightPositions[3]);
+        multipleLightTriangles.setFloat3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+        multipleLightTriangles.setFloat3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+        multipleLightTriangles.setFloat3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+        multipleLightTriangles.setFloat("pointLights[3].constant", 1.0f);
+        multipleLightTriangles.setFloat("pointLights[3].linear", 0.09f);
+        multipleLightTriangles.setFloat("pointLights[3].quadratic", 0.032f);
+        
+        // spotLight
+        multipleLightTriangles.setVec3("spotLight.position", camera.position);
+        multipleLightTriangles.setVec3("spotLight.direction", camera.front);
+        multipleLightTriangles.setFloat3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+        multipleLightTriangles.setFloat3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+        multipleLightTriangles.setFloat3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+        multipleLightTriangles.setFloat("spotLight.constant", 1.0f);
+        multipleLightTriangles.setFloat("spotLight.linear", 0.09f);
+        multipleLightTriangles.setFloat("spotLight.quadratic", 0.032f);
+        multipleLightTriangles.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+        multipleLightTriangles.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
+        multipleLightTriangles.setMatrix1("projection", glm::value_ptr(projection));
+        multipleLightTriangles.setMatrix1("view", glm::value_ptr(view));
+
+        model = glm::mat4(1.0f);
+        multipleLightTriangles.setMatrix1("model", glm::value_ptr(model));
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, woodenBox.ID);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, woodenBoxSpecular.ID);
+
+        glBindVertexArray(multipleVAO);
+
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            multipleLightTriangles.setMatrix1("model", glm::value_ptr(model));
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+
+        lightingBoxTriangles.use();
+        lightingBoxTriangles.setMatrix1("projection", glm::value_ptr(projection));
+        lightingBoxTriangles.setMatrix1("view", glm::value_ptr(view));
+
+        // we now draw as many light bulbs as we have point lights.
+        glBindVertexArray(lightVAO);
+        for (unsigned int i = 0; i < 4; i++)
+        {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, pointLightPositions[i]);
+            model = glm::scale(model, glm::vec3(0.2f));
+            lightingBoxTriangles.setMatrix1("model", glm::value_ptr(model));
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
@@ -604,6 +737,10 @@ int main() {
     // deallocate resources when done with them
     glDeleteVertexArrays(8, VAOs);
     glDeleteBuffers(8, VBOs);
+
+    glDeleteVertexArrays(1, &multipleVAO);
+    glDeleteVertexArrays(1, &lightVAO);
+    glDeleteBuffers(1, &multipleVBO);
     
     orangeTriangle.del();
     yellowTriangle.del();
@@ -614,6 +751,7 @@ int main() {
     lightingBoxTriangles.del();
     litObjectTriangles.del();
     litWoodenBoxTriangles.del();
+    multipleLightTriangles.del();
 
     // GLFW terminate and clear allocated GLFW resources
     glfwTerminate();
