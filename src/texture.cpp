@@ -1,13 +1,15 @@
 #include "../include/texture.hpp"
 
 #ifndef STB_IMAGE_IMPLEMENTATION
-
 #define STB_IMAGE_IMPLEMENTATION
+
 #include "../include/stb_image.h"
 
 #endif
 
-Texture::Texture(const char* tPath) {
+Texture::Texture(const char* tPath, const char* type) {
+    this->type = type;
+    
     glGenTextures(1, &this->ID);
     glBindTexture(GL_TEXTURE_2D, this->ID);
 

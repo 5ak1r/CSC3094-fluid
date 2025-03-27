@@ -10,8 +10,9 @@
 class Texture {
 public:
     unsigned int ID;
+    const char* type;
 
-    Texture(const char* tPath);
+    Texture(const char* tPath, const char* type);
     
     void use();
 

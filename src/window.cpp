@@ -124,11 +124,11 @@ int main() {
     Shader litWoodenBoxTriangles("src/shaders/vertex/litWoodenBox.vs", "src/shaders/fragment/litWoodenBox.fs");
     Shader multipleLightTriangles("src/shaders/vertex/multipleLights.vs", "src/shaders/fragment/multipleLights.fs");
 
-    Texture woodenContainer("src/textures/wooden-container.jpg");
-    Texture face("src/textures/face.png");
-    Texture woodenBox("src/textures/wooden-box.png");
-    Texture woodenBoxSpecular("src/textures/wooden-box-specular.png");
-    Texture woodenBoxEmission("src/textures/matrix.jpg");
+    Texture woodenContainer("src/textures/wooden-container.jpg", "texture_diffuse");
+    Texture face("src/textures/face.png", "texture_diffuse");
+    Texture woodenBox("src/textures/wooden-box.png", "texture_diffuse");
+    Texture woodenBoxSpecular("src/textures/wooden-box-specular.png", "texture_specular");
+    Texture woodenBoxEmission("src/textures/matrix.jpg", "texture_emission");
 
     float vertices[] = {
         -0.45f, -0.25f, 0.0f,  // left 
