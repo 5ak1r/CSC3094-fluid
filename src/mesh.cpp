@@ -2,11 +2,8 @@
 #include <cstddef>
 #include <string>
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) {
-    this->vertices = vertices;
-    this->indices = indices;
-    this->textures = textures;
-
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
+: vertices(std::move(vertices)), indices(std::move(indices)), textures(std::move(textures)) {
     setupMesh();
 }
 
@@ -25,15 +22,15 @@ void Mesh::setupMesh() {
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+    glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
 
     glBindVertexArray(0);
 }
 
-void Mesh::Draw(Shader &shader) {
+void Mesh::Draw(Shader &shader) const {
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
 
@@ -46,13 +43,14 @@ void Mesh::Draw(Shader &shader) {
         if(name == "texture_diffuse") number = std::to_string(diffuseNr++);
         else if(name == "texture_specular") number = std::to_string(specularNr++);
 
-        shader.setInt(("material." + name + number).c_str(), i);
+        shader.setInt((name + number).c_str(), i);
+        
         glBindTexture(GL_TEXTURE_2D, this->textures[i].ID);
     }
 
-    glActiveTexture(GL_TEXTURE0);
-
     glBindVertexArray(this->VAO);
-    glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(this->indices.size()), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+
+    glActiveTexture(GL_TEXTURE0);
 }

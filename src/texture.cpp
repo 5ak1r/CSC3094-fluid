@@ -1,4 +1,5 @@
 #include "../include/texture.hpp"
+#include <ostream>
 
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -7,7 +8,8 @@
 
 #endif
 
-Texture::Texture(const char* tPath, const char* type) {
+Texture::Texture(const char* tPath, std::string type) {
+    this->path = tPath;
     this->type = type;
     
     glGenTextures(1, &this->ID);
@@ -25,9 +27,21 @@ Texture::Texture(const char* tPath, const char* type) {
     std::string str(tPath);
 
     if (data) {
-        // .png needs RGBA but .jpg does not
-        if (str.find(".jpg") != std::string::npos) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        else glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+        GLenum format;
+        switch(nrChannels) {
+            case 1:
+                format = GL_RED;
+                break;
+            case 3:
+                format = GL_RGB;
+                break;
+            case 4:
+                format = GL_RGBA;
+                break;
+        }
+
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {

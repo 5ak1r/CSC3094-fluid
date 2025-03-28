@@ -10,9 +10,10 @@
 class Texture {
 public:
     unsigned int ID;
-    const char* type;
+    std::string path;
+    std::string type;
 
-    Texture(const char* tPath, const char* type);
+    Texture(const char* tPath, std::string type);
     
     void use();
 
