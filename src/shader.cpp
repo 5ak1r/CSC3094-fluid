@@ -88,7 +88,7 @@ void Shader::del() {
 GLint Shader::getUniformLocation(const std::string &name) const {
     GLint location = glGetUniformLocation(this->ID, name.c_str());
     
-    if (location == -1) {
+    if (location == -1 && name != "texture_specular1") {
         std::cerr << "ERROR::SHADER::UNIFORM::NOT_FOUND::" << name << std::endl;
         std::exit(EXIT_FAILURE);
     }

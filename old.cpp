@@ -115,25 +115,25 @@ int main() {
     
     stbi_set_flip_vertically_on_load(true);
 
-    Shader orangeTriangle("src/shaders/vertex/vertex.vs", "src/shaders/fragment/orange.fs");
-    Shader yellowTriangle("src/shaders/vertex/vertex.vs","src/shaders/fragment/yellow.fs");
-    Shader changingTriangle("src/shaders/vertex/vertex.vs", "src/shaders/fragment/change.fs");
-    Shader verticesTriangle("src/shaders/vertex/verticesColor.vs", "src/shaders/fragment/verticesColor.fs");
-    Shader boxTriangles("src/shaders/vertex/boxVertex.vs", "src/shaders/fragment/boxFragment.fs");
-    Shader nonRainbowBoxTriangles("src/shaders/vertex/nonRainbowBoxVertex.vs", "src/shaders/fragment/nonRainbowBoxFragment.fs");
-    Shader lightingBoxTriangles("src/shaders/vertex/lighting.vs", "src/shaders/fragment/lighting.fs");
-    Shader litObjectTriangles("src/shaders/vertex/litObject.vs", "src/shaders/fragment/litObject.fs");
-    Shader litWoodenBoxTriangles("src/shaders/vertex/litWoodenBox.vs", "src/shaders/fragment/litWoodenBox.fs");
-    Shader multipleLightTriangles("src/shaders/vertex/multipleLights.vs", "src/shaders/fragment/multipleLights.fs");
-    Shader modelLoadTriangles("src/shaders/vertex/modelLoad.vs", "src/shaders/fragment/modelLoad.fs");
+    Shader orangeTriangle("resources/shaders/vertex/vertex.vs", "resources/shaders/fragment/orange.fs");
+    Shader yellowTriangle("resources/shaders/vertex/vertex.vs","resources/shaders/fragment/yellow.fs");
+    Shader changingTriangle("resources/shaders/vertex/vertex.vs", "resources/shaders/fragment/change.fs");
+    Shader verticesTriangle("resources/shaders/vertex/verticesColor.vs", "resources/shaders/fragment/verticesColor.fs");
+    Shader boxTriangles("resources/shaders/vertex/boxVertex.vs", "resources/shaders/fragment/boxFragment.fs");
+    Shader nonRainbowBoxTriangles("resources/shaders/vertex/nonRainbowBoxVertex.vs", "resources/shaders/fragment/nonRainbowBoxFragment.fs");
+    Shader lightingBoxTriangles("resources/shaders/vertex/lighting.vs", "resources/shaders/fragment/lighting.fs");
+    Shader litObjectTriangles("resources/shaders/vertex/litObject.vs", "resources/shaders/fragment/litObject.fs");
+    Shader litWoodenBoxTriangles("resources/shaders/vertex/litWoodenBox.vs", "resources/shaders/fragment/litWoodenBox.fs");
+    Shader multipleLightTriangles("resources/shaders/vertex/multipleLights.vs", "resources/shaders/fragment/multipleLights.fs");
+    Shader modelLoadTriangles("resources/shaders/vertex/modelLoad.vs", "resources/shaders/fragment/modelLoad.fs");
 
-    Texture woodenContainer("src/textures/wooden-container.jpg", "texture_diffuse");
-    Texture face("src/textures/face.png", "texture_diffuse");
-    Texture woodenBox("src/textures/wooden-box.png", "texture_diffuse");
-    Texture woodenBoxSpecular("src/textures/wooden-box-specular.png", "texture_specular");
-    Texture woodenBoxEmission("src/textures/matrix.jpg", "texture_emission");
+    Texture woodenContainer("resources/textures/wooden-container.jpg", "texture_diffuse");
+    Texture face("resources/textures/face.png", "texture_diffuse");
+    Texture woodenBox("resources/textures/wooden-box.png", "texture_diffuse");
+    Texture woodenBoxSpecular("resources/textures/wooden-box-specular.png", "texture_specular");
+    Texture woodenBoxEmission("resources/textures/matrix.jpg", "texture_emission");
 
-    Model modelLoad("src/models/backpack/backpack.obj");
+    Model modelLoad("resources/models/backpack/backpack.obj");
 
     float vertices[] = {
         -0.45f, -0.25f, 0.0f,  // left 

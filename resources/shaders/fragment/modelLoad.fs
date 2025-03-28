@@ -12,5 +12,4 @@ vec4 color;
 void main()
 {   
     FragColor = texture(texture_diffuse1, TexCoords);
-    color = texture(texture_specular1, TexCoords);
 }

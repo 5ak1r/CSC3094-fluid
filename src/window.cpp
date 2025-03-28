@@ -110,19 +110,18 @@ int main() {
         std::cout << "ERROR::GLAD::FAILED_INIT" << std::endl;
         return -1;
     }
-
-    glEnable(GL_DEPTH_TEST);
     
     stbi_set_flip_vertically_on_load(true);
+    glEnable(GL_DEPTH_TEST);
 
-    Shader modelLoadTriangles("src/shaders/vertex/modelLoad.vs", "src/shaders/fragment/modelLoad.fs");
-    Model modelLoad("src/models/backpack/backpack.obj");
+    Shader modelLoadTriangles("resources/shaders/vertex/modelLoad.vs", "resources/shaders/fragment/modelLoad.fs");
+    Model modelLoad("resources/models/backpack/backpack.obj");
     
     // render loop
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
 
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(1.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // camera movement speed
