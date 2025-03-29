@@ -121,7 +121,7 @@ int main() {
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
 
-        glClearColor(1.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // camera movement speed

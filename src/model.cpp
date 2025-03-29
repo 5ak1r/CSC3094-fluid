@@ -69,6 +69,8 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
 
             vertex.texCoords = vec;
         }
+
+        vertices.push_back(vertex);
     }
 
     for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
