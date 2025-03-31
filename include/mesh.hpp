@@ -22,9 +22,11 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 
     void Draw(Shader &shader) const;
+    void DrawInstanced(Shader &shader, const std::vector<glm::mat4> &modelMatrices);
 
 private:
     unsigned int VAO, VBO, EBO;
+    unsigned int instanceVBO = 0;
 
     void setupMesh();
 

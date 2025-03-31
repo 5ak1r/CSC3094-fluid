@@ -18,6 +18,7 @@ public:
     Model(std::string path);
     
     void Draw(Shader &shader) const;
+    void DrawInstanced(Shader &shader, const std::vector<glm::mat4> &modelMatrices);
 
 private:
     std::vector<Texture> textures_loaded;

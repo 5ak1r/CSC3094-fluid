@@ -140,9 +140,20 @@ int main() {
         model = glm::translate(model, glm::vec3(0.0f));
         model = glm::scale(model, glm::vec3(1.0f));
 
-        modelLoadTriangles.setMatrix1("model", glm::value_ptr(model));
+        std::vector<glm::mat4> modelMatrices;
+        
+        for(int i = 0; i < 2; i++) {
+            for(int j = 0; j < 2; j++) {
+                for(int k = 0; k < 2; k++) {
+                    glm::mat4 modelMatrix = glm::mat4(1.0f);
+                    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
+                    modelMatrix = glm::translate(modelMatrix, glm::vec3(i * 3.0f, j * 3.0f, k * 3.0f));
+                    modelMatrices.push_back(modelMatrix);
+                }
+            }
+        }
 
-        modelLoad.Draw(modelLoadTriangles);
+        modelLoad.DrawInstanced(modelLoadTriangles, modelMatrices); 
 
         glfwSwapBuffers(window);
         glfwPollEvents();    
