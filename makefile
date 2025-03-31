@@ -7,7 +7,7 @@ TARGET      := $(BUILD_DIR)/$(EXEC)
 CXX         := g++
 CXXFLAGS    := -o $(TARGET) -I$(INCLUDE_DIR) -lglfw -lGL -lGLU -lassimp
 
-build:
+build: $(SRC)
 	mkdir -p $(BUILD_DIR)
 	$(CXX) $(SRC) $(CXXFLAGS)
 

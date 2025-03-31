@@ -8,6 +8,7 @@
 #include "../include/glm/gtc/type_ptr.hpp"
 #include "../include/mesh.hpp"
 #include "../include/model.hpp"
+#include "../include/particle.hpp"
 
 #include <GL/glext.h>
 #include <GLFW/glfw3.h>
@@ -16,6 +17,7 @@
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
+const unsigned int PARTICLE_ROW_COUNT = 3;
 
 Camera camera(glm::vec3(0.0f,0.0f,3.0f));
 float lastX = (float)WIDTH / 2;
@@ -116,7 +118,25 @@ int main() {
 
     Shader modelLoadTriangles("resources/shaders/vertex/modelLoad.vs", "resources/shaders/fragment/modelLoad.fs");
     Model modelLoad("resources/models/backpack/backpack.obj");
-    
+
+    std::vector<glm::mat4> modelMatrices;
+    std::vector<Particle*> particles;
+        
+    for(int i = 0; i < PARTICLE_ROW_COUNT; i++) {
+        for(int j = 0; j < PARTICLE_ROW_COUNT; j++) {
+            for(int k = 0; k < PARTICLE_ROW_COUNT; k++) {
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::scale(model, glm::vec3(0.1f));
+                model = glm::translate(model, glm::vec3(i * 3.0f, j * 3.0f, k * 3.0f));
+
+                Particle *particle = new Particle(glm::vec3(model[3]), model);
+
+                particles.push_back(particle);
+                modelMatrices.push_back(model);
+            }
+        }
+    }
+
     // render loop
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
@@ -136,22 +156,7 @@ int main() {
         modelLoadTriangles.setMatrix1("projection", glm::value_ptr(projection));
         modelLoadTriangles.setMatrix1("view", value_ptr(view));
 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f));
-        model = glm::scale(model, glm::vec3(1.0f));
-
-        std::vector<glm::mat4> modelMatrices;
-        
-        for(int i = 0; i < 2; i++) {
-            for(int j = 0; j < 2; j++) {
-                for(int k = 0; k < 2; k++) {
-                    glm::mat4 modelMatrix = glm::mat4(1.0f);
-                    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
-                    modelMatrix = glm::translate(modelMatrix, glm::vec3(i * 3.0f, j * 3.0f, k * 3.0f));
-                    modelMatrices.push_back(modelMatrix);
-                }
-            }
-        }
+        for(auto particle: particles) particle->updatePhysics(deltaTime);
 
         modelLoad.DrawInstanced(modelLoadTriangles, modelMatrices); 
 
