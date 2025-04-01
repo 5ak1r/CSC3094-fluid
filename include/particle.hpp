@@ -4,7 +4,11 @@
 #include "glm/fwd.hpp"
 #include "glm/glm.hpp"
 
-struct Particle {
+#include <vector>
+#include <unordered_map>
+
+class Particle {
+public:
     glm::mat4 model;
 
     glm::vec3 position;
@@ -12,19 +16,27 @@ struct Particle {
     glm::vec3 acceleration;
     glm::vec3 force;
 
+    glm::ivec3 cell;
+    uint hash;
+
     float density;
     float pressure;
 
-    Particle(glm::vec3 position, glm::mat4 model) : position(position), model(model) {
-        this->velocity = glm::vec3(0.0f);
-        this->acceleration = glm::vec3(0.0f, -9.81f, 0.0f);
-        this->force = glm::vec3(0.0f);
-        this->density = 0.0f;
-        this->pressure = 0.0f;
-    }
-    void updatePhysics(float deltaTime) {
-        this->velocity = this->velocity + this->acceleration * deltaTime;
-    }
+    std::vector<Particle*> neighbours;
+
+    Particle(glm::vec3 position, glm::mat4 model);
+
+    void calcCell();
+    void calcHash();
+
+    uint cellHash(const glm::ivec3 &cell);
+
+    glm::mat4 updatePhysics(float deltaTime);
+
+    static void sortParticles(std::vector<Particle*> particles);
+    static std::unordered_map<uint32_t, uint32_t> neighbourTable(std::vector<Particle*> sortedParticles);
+
+    void getNeighbours(std::vector<Particle*> sortedParticles, std::unordered_map<uint32_t, uint32_t>& neighbourTable);
 };
 
 #endif

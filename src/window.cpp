@@ -1,5 +1,6 @@
 #include "../include/glad.h"
 #include "../include/window.hpp"
+#include "../include/constants.hpp"
 #include "../include/shader.hpp"
 #include "../include/texture.hpp"
 #include "../include/camera.hpp"
@@ -11,13 +12,8 @@
 #include "../include/particle.hpp"
 
 #include <GL/glext.h>
-#include <GLFW/glfw3.h>
+#include <cstdlib>
 #include <iostream>
-#include <cmath>
-
-const unsigned int WIDTH = 800;
-const unsigned int HEIGHT = 600;
-const unsigned int PARTICLE_ROW_COUNT = 3;
 
 Camera camera(glm::vec3(0.0f,0.0f,3.0f));
 float lastX = (float)WIDTH / 2;
@@ -126,10 +122,10 @@ int main() {
         for(int j = 0; j < PARTICLE_ROW_COUNT; j++) {
             for(int k = 0; k < PARTICLE_ROW_COUNT; k++) {
                 glm::mat4 model = glm::mat4(1.0f);
-                model = glm::scale(model, glm::vec3(0.1f));
-                model = glm::translate(model, glm::vec3(i * 3.0f, j * 3.0f, k * 3.0f));
+                model = glm::translate(model, glm::vec3(TRANSLATE) * glm::vec3(i, j, k));
+                model = glm::scale(model, glm::vec3(0.2f));
 
-                Particle *particle = new Particle(glm::vec3(model[3]), model);
+                Particle *particle = new Particle(model[3], model);
 
                 particles.push_back(particle);
                 modelMatrices.push_back(model);
@@ -137,6 +133,13 @@ int main() {
         }
     }
 
+    Particle::sortParticles(particles);
+    std::unordered_map<uint32_t, uint32_t> nTable = Particle::neighbourTable(particles);
+    for(auto i : particles) {
+        i->getNeighbours(particles, nTable);
+    }
+    //Particle::getNeighbours(std::vector<Particle *> sortedParticles, std::unordered_map<uint32_t, uint32_t> &neighbourTable)
+    
     // render loop
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
@@ -156,7 +159,9 @@ int main() {
         modelLoadTriangles.setMatrix1("projection", glm::value_ptr(projection));
         modelLoadTriangles.setMatrix1("view", value_ptr(view));
 
-        for(auto particle: particles) particle->updatePhysics(deltaTime);
+        modelMatrices.clear();
+
+        for(auto particle: particles) modelMatrices.push_back(particle->updatePhysics(deltaTime));
 
         modelLoad.DrawInstanced(modelLoadTriangles, modelMatrices); 
 
