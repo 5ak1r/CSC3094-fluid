@@ -1,9 +1,15 @@
 #include "../include/mesh.hpp"
+
 #include <cstddef>
 #include <string>
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
 : vertices(std::move(vertices)), indices(std::move(indices)), textures(std::move(textures)) {
+    setupMesh();
+}
+
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, Material noTextures)
+: vertices(std::move(vertices)), indices(std::move(indices)), textures(std::move(textures)), noTextures(noTextures) {
     setupMesh();
 }
 
@@ -73,21 +79,33 @@ void Mesh::DrawInstanced(Shader &shader, const std::vector<glm::mat4> &modelMatr
         glBufferSubData(GL_ARRAY_BUFFER, 0, modelMatrices.size() * sizeof(glm::mat4), &modelMatrices[0]);
     }
 
-    unsigned int diffuseNr = 1;
-    unsigned int specularNr = 1;
+    if(textures.size() > 0) {
+        unsigned int diffuseNr = 1;
+        unsigned int specularNr = 1;
 
-    for(unsigned int i = 0; i < this->textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + i);
+        for(unsigned int i = 0; i < this->textures.size(); i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
 
-        std::string number;
-        std::string name = this->textures[i].type;
+            std::string number;
+            std::string name = this->textures[i].type;
 
-        if(name == "texture_diffuse") number = std::to_string(diffuseNr++);
-        else if(name == "texture_specular") number = std::to_string(specularNr++);
+            if(name == "texture_diffuse") number = std::to_string(diffuseNr++);
+            else if(name == "texture_specular") number = std::to_string(specularNr++);
 
-        shader.setInt((name + number).c_str(), i);
-        
-        glBindTexture(GL_TEXTURE_2D, this->textures[i].ID);
+            shader.setInt((name + number).c_str(), i);
+            
+            glBindTexture(GL_TEXTURE_2D, this->textures[i].ID);
+        }
+    } else {
+        shader.setVec3("material.ambient", noTextures.ambient);
+        shader.setVec3("material.diffuse", noTextures.diffuse);
+        shader.setVec3("material.specular", noTextures.specular);
+        shader.setFloat("material.shininess", noTextures.shininess);
+
+        shader.setVec3("light.position", glm::vec3(1.0f, 1.0f, 1.0f));
+        shader.setVec3("light.ambient",  glm::vec3(0.1f));
+        shader.setVec3("light.diffuse",  glm::vec3(1.0f));
+        shader.setVec3("light.specular", glm::vec3(1.0f));
     }
 
     glDrawElementsInstanced(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0, modelMatrices.size());

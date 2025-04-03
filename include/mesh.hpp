@@ -13,13 +13,24 @@ struct Vertex {
     glm::vec2 texCoords;
 };
 
+struct Material {
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+    
+    float shininess;
+};
+
 class Mesh {
 public:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
 
+    Material noTextures;
+
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, Material noTextures);
 
     void Draw(Shader &shader) const;
     void DrawInstanced(Shader &shader, const std::vector<glm::mat4> &modelMatrices);

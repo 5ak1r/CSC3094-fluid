@@ -11,7 +11,6 @@
 #include "../include/model.hpp"
 #include "../include/particle.hpp"
 
-#include <GL/glext.h>
 #include <cstdlib>
 #include <iostream>
 
@@ -112,8 +111,8 @@ int main() {
     stbi_set_flip_vertically_on_load(true);
     glEnable(GL_DEPTH_TEST);
 
-    Shader modelLoadTriangles("resources/shaders/vertex/modelLoad.vs", "resources/shaders/fragment/modelLoad.fs");
-    Model modelLoad("resources/models/backpack/backpack.obj");
+    Shader modelLoadTriangles("resources/shaders/vertex/modelLoadNoTextures.vs", "resources/shaders/fragment/modelLoadNoTextures.fs");
+    Model modelLoad("resources/models/sphere/sphere.obj");
 
     std::vector<glm::mat4> modelMatrices;
     std::vector<Particle*> particles;
@@ -144,7 +143,7 @@ int main() {
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
 
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // camera movement speed
@@ -159,6 +158,7 @@ int main() {
         modelLoadTriangles.setMatrix1("projection", glm::value_ptr(projection));
         modelLoadTriangles.setMatrix1("view", value_ptr(view));
 
+        modelLoadTriangles.setVec3("viewPos", camera.position);
         modelMatrices.clear();
 
         for(auto particle: particles) modelMatrices.push_back(particle->updatePhysics(deltaTime));

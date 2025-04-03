@@ -10,6 +10,6 @@ const unsigned int PARTICLE_COUNT = std::pow(PARTICLE_ROW_COUNT, 3);
 const float SCALE = 0.1f;
 const float TRANSLATE = 3.0f;
 const float CELL_SIZE = SCALE * TRANSLATE;
-const float GRAVITY = -2.0f;
+const float GRAVITY = -1.0f;
 
 #endif
