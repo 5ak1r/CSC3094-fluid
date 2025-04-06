@@ -10,7 +10,7 @@
 #include <unordered_map>
 
 Particle::Particle(glm::vec3 position, glm::mat4 model) : position(position), model(model) {
-    this->velocity = glm::vec3(0.0f);
+    this->velocity = glm::vec3(rand(), 0.0f, rand());
     this->acceleration = glm::vec3(0.0f, GRAVITY, 0.0f);
     this->force = glm::vec3(0.0f);
 
@@ -44,12 +44,22 @@ glm::mat4 Particle::updatePhysics(float deltaTime) {
     
     if(this->position.y <= 0.0f) {
         this->position.y = 0.0f;
-        this->velocity.y *= -0.8f;
+        this->velocity.y *= -0.9f;
 
         if(glm::abs(this->velocity.y) < 0.1f) this->velocity.y = 0.0f;
     }
 
-    return glm::translate(glm::mat4(1.0f), this->position);
+    if (std::abs(this->position.x) >= BOX_SIZE) {
+        this->position.x = (this->position.x > 0.0f) ? BOX_SIZE : -BOX_SIZE;
+        this->velocity.x *= -0.9f;
+    }
+
+    if (std::abs(this->position.z) >= BOX_SIZE) {
+        this->position.z = (this->position.z > 0.0f) ? BOX_SIZE : -BOX_SIZE;
+        this->velocity.z *= -0.9f;
+    }
+
+    return glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(SCALE)), this->position);
 }
 
 void Particle::sortParticles(std::vector<Particle*> particles) {

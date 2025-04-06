@@ -111,8 +111,8 @@ int main() {
     stbi_set_flip_vertically_on_load(true);
     glEnable(GL_DEPTH_TEST);
 
-    Shader modelLoadTriangles("resources/shaders/vertex/modelLoadNoTextures.vs", "resources/shaders/fragment/modelLoadNoTextures.fs");
-    Model modelLoad("resources/models/sphere/sphere.obj");
+    Shader modelShader("resources/shaders/vertex/modelLoadNoTextures.vs", "resources/shaders/fragment/modelLoadNoTextures.fs");
+    Model model("resources/models/sphere/sphere.obj");
 
     std::vector<glm::mat4> modelMatrices;
     std::vector<Particle*> particles;
@@ -122,7 +122,7 @@ int main() {
             for(int k = 0; k < PARTICLE_ROW_COUNT; k++) {
                 glm::mat4 model = glm::mat4(1.0f);
                 model = glm::translate(model, glm::vec3(TRANSLATE) * glm::vec3(i, j, k));
-                model = glm::scale(model, glm::vec3(0.2f));
+                model = glm::scale(model, glm::vec3(SCALE));
 
                 Particle *particle = new Particle(model[3], model);
 
@@ -151,26 +151,26 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        modelLoadTriangles.use();
+        modelShader.use();
 
         glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
-        modelLoadTriangles.setMatrix1("projection", glm::value_ptr(projection));
-        modelLoadTriangles.setMatrix1("view", value_ptr(view));
+        modelShader.setMatrix1("projection", glm::value_ptr(projection));
+        modelShader.setMatrix1("view", value_ptr(view));
 
-        modelLoadTriangles.setVec3("viewPos", camera.position);
+        modelShader.setVec3("viewPos", camera.position);
         modelMatrices.clear();
 
         for(auto particle: particles) modelMatrices.push_back(particle->updatePhysics(deltaTime));
 
-        modelLoad.DrawInstanced(modelLoadTriangles, modelMatrices); 
+        model.DrawInstanced(modelShader, modelMatrices); 
 
         glfwSwapBuffers(window);
         glfwPollEvents();    
     }
 
 
-    modelLoadTriangles.del();
+    modelShader.del();
 
     // GLFW terminate and clear allocated GLFW resources
     glfwTerminate();
