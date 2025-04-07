@@ -87,7 +87,7 @@ int main() {
     #endif
 
     // GLFW create window
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "FluidSimulation", NULL, NULL);
 
     if (window == NULL) {
         std::cout << "ERROR::GLFW::WINDOW::FAILED_INIT" << std::endl;
@@ -136,8 +136,8 @@ int main() {
     std::unordered_map<uint32_t, uint32_t> nTable = Particle::neighbourTable(particles);
     for(auto i : particles) {
         i->getNeighbours(particles, nTable);
+        std::cout << i->velocity.x << " " << i->velocity.z << std::endl;
     }
-    //Particle::getNeighbours(std::vector<Particle *> sortedParticles, std::unordered_map<uint32_t, uint32_t> &neighbourTable)
     
     // render loop
     while(!glfwWindowShouldClose(window)) {

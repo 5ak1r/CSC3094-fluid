@@ -10,7 +10,7 @@
 #include <unordered_map>
 
 Particle::Particle(glm::vec3 position, glm::mat4 model) : position(position), model(model) {
-    this->velocity = glm::vec3(rand(), 0.0f, rand());
+    this->velocity = glm::vec3(0.0f, 0.0f, 0.0f);
     this->acceleration = glm::vec3(0.0f, GRAVITY, 0.0f);
     this->force = glm::vec3(0.0f);
 
@@ -22,13 +22,12 @@ Particle::Particle(glm::vec3 position, glm::mat4 model) : position(position), mo
 }
 
 void Particle::calcCell() {
-    this->cell = this->position / CELL_SIZE;
+    
+    this->cell = this->position / TRANSLATE;
 }
 
 void Particle::calcHash() {
-    this->hash = ((uint)(this->cell.x * 73856093) ^
-                  (uint)(this->cell.y * 19349663) ^
-                  (uint)(this->cell.z * 83492791) % PARTICLE_COUNT);
+    this->hash = this->cellHash(this->cell);
 }
 
 uint Particle::cellHash(const glm::ivec3 &cell) {
@@ -59,7 +58,9 @@ glm::mat4 Particle::updatePhysics(float deltaTime) {
         this->velocity.z *= -0.9f;
     }
 
-    return glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(SCALE)), this->position);
+    this->model = glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(SCALE)), this->position);
+
+    return this->model;
 }
 
 void Particle::sortParticles(std::vector<Particle*> particles) {
