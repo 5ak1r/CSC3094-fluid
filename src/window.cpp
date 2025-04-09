@@ -163,7 +163,7 @@ int main() {
 
         for(auto particle: particles) modelMatrices.push_back(particle->updatePhysics(deltaTime));
 
-        model.DrawInstanced(modelShader, modelMatrices); 
+        model.drawInstanced(modelShader, modelMatrices); 
 
         glfwSwapBuffers(window);
         glfwPollEvents();    

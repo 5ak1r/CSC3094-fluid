@@ -32,8 +32,8 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, Material noTextures);
 
-    void Draw(Shader &shader) const;
-    void DrawInstanced(Shader &shader, const std::vector<glm::mat4> &modelMatrices);
+    void draw(Shader &shader) const;
+    void drawInstanced(Shader &shader, const std::vector<glm::mat4> &modelMatrices);
 
 private:
     unsigned int VAO, VBO, EBO;
