@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
 Particle::Particle(glm::vec3 position, glm::mat4 model) : position(position), model(model) {
     this->velocity = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -59,6 +60,8 @@ glm::mat4 Particle::updatePhysics(float deltaTime) {
     }
 
     this->model = glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(SCALE)), this->position);
+    this->calcCell();
+    this->calcHash();
 
     return this->model;
 }
@@ -69,21 +72,16 @@ void Particle::sortParticles(std::vector<Particle*> particles) {
 
 std::unordered_map<uint32_t, uint32_t> Particle::neighbourTable(std::vector<Particle*> sortedParticles) {
     std::unordered_map<uint32_t, uint32_t> neighbourTable;
-    uint32_t previousHash = 0;
 
     for (size_t i = 0; i < PARTICLE_COUNT; i++) {
-        uint32_t currentHash = sortedParticles[i]->hash;
-        if (currentHash != previousHash) {
-            neighbourTable[currentHash] = i;
-            previousHash = currentHash;
-        }
+        neighbourTable[sortedParticles[i]->hash] = i;
     }
 
     return neighbourTable;
 }
 
 void Particle::getNeighbours(std::vector<Particle*> sortedParticles, std::unordered_map<uint32_t, uint32_t> &neighbourTable) {
-    std::vector<Particle*> neighbours;
+    std::unordered_set<Particle*> neighbours;
 
     for(int dx = -1; dx <= 1; dx++) {
         for(int dy = -1; dy <= 1; dy++) {
@@ -92,11 +90,11 @@ void Particle::getNeighbours(std::vector<Particle*> sortedParticles, std::unorde
                 uint32_t neighbourHash = this->cellHash(neighbourCell);
                 if(neighbourTable.find(neighbourHash) != neighbourTable.end()) {
                     Particle* neighbourParticle = sortedParticles[neighbourTable[neighbourHash]];
-                    neighbours.push_back(neighbourParticle);
+                    neighbours.insert(neighbourParticle);
                 }
             }
         }
     }
 
-    this->neighbours = neighbours;
+    this->neighbours = std::vector<Particle*>(neighbours.begin(), neighbours.end());
 }

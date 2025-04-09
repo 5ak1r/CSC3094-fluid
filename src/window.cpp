@@ -131,13 +131,6 @@ int main() {
             }
         }
     }
-
-    Particle::sortParticles(particles);
-    std::unordered_map<uint32_t, uint32_t> nTable = Particle::neighbourTable(particles);
-    for(auto i : particles) {
-        i->getNeighbours(particles, nTable);
-        std::cout << i->velocity.x << " " << i->velocity.z << std::endl;
-    }
     
     // render loop
     while(!glfwWindowShouldClose(window)) {
@@ -161,7 +154,13 @@ int main() {
         modelShader.setVec3("viewPos", camera.position);
         modelMatrices.clear();
 
-        for(auto particle: particles) modelMatrices.push_back(particle->updatePhysics(deltaTime));
+        Particle::sortParticles(particles);
+        std::unordered_map<uint32_t, uint32_t> nTable = Particle::neighbourTable(particles);
+
+        for(auto particle : particles) {
+            particle->getNeighbours(particles, nTable);
+            modelMatrices.push_back(particle->updatePhysics(deltaTime));
+        }
 
         model.drawInstanced(modelShader, modelMatrices); 
 
