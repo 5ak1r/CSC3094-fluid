@@ -36,7 +36,7 @@ void Mesh::setupMesh() {
     glBindVertexArray(0);
 }
 
-void Mesh::Draw(Shader &shader) const {
+void Mesh::draw(Shader &shader) const {
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
 
@@ -61,7 +61,7 @@ void Mesh::Draw(Shader &shader) const {
     glActiveTexture(GL_TEXTURE0);
 }
 
-void Mesh::DrawInstanced(Shader &shader, const std::vector<glm::mat4> &modelMatrices) {
+void Mesh::drawInstanced(Shader &shader, const std::vector<glm::mat4> &modelMatrices) {
     glBindVertexArray(this->VAO);
 
     if (this->instanceVBO == 0) {

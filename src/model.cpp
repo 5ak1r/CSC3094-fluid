@@ -13,12 +13,12 @@ Model::Model(std::string path) {
     this->loadModel(path);
 }
 
-void Model::Draw(Shader &shader) const {
-    for(unsigned int i = 0; i < this->meshes.size(); i++) meshes[i].Draw(shader);
+void Model::draw(Shader &shader) const {
+    for(unsigned int i = 0; i < this->meshes.size(); i++) meshes[i].draw(shader);
 }
 
-void Model::DrawInstanced(Shader &shader, const std::vector<glm::mat4> &modelMatrices) {
-    for(unsigned int i = 0; i < this->meshes.size(); i++) meshes[i].DrawInstanced(shader, modelMatrices);
+void Model::drawInstanced(Shader &shader, const std::vector<glm::mat4> &modelMatrices) {
+    for(unsigned int i = 0; i < this->meshes.size(); i++) meshes[i].drawInstanced(shader, modelMatrices);
 }
 
 void Model::loadModel(std::string path) {
